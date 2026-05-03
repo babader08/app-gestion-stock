@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@layer base {
+  body,
+  html {
+    color: black;
+  }
+  h1 {
+    color: black;
+  }
+
+  p {
+    color: black;
+  }
+
+  input {
+    color: black;
+  }
+}
+
+@layer utilities {
+  .bord-b {
+    border: 2px solid black;
+  }
+
+  .flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

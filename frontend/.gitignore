@@ -1,0 +1,18 @@
+# Dépendances (Le plus lourd !)
+node_modules/
+
+# Build de production
+dist/
+build/
+
+# Variables d'environnement
+.env
+.env.local
+
+# Debug et Logs
+npm-debug.log*
+yarn-error.log*
+
+# IDE et OS
+.vscode/
+.DS_Store
