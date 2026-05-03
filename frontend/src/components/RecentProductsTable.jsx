@@ -53,7 +53,7 @@ const RecentProductsTable = () => {
           <Package className="mb-3 h-12 w-12 text-gray-300" />
           <p className="text-gray-500">Aucun produit n'a encore été ajouté.</p>
           <Link
-            to="/products/new"
+            to="/products"
             className="mt-4 text-sm font-medium text-blue-600 hover:underline"
           >
             Ajouter un premier produit
