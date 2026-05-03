@@ -4,7 +4,6 @@ import { useState, useRef } from "react";
 import { useCreateProduct, useUploadImage } from "../hooks";
 import toast from "react-hot-toast";
 import imageCompression from "browser-image-compression";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function AddProductForm() {
   const [imagePreview, setImagePreview] = useState(null);
@@ -28,7 +27,6 @@ export default function AddProductForm() {
   });
   const { mutate: uploadImage, isPending: pendingImage } = useUploadImage();
   const { mutate: createProduct, isPending } = useCreateProduct();
-  const queryClient = useQueryClient();
 
   const handleImageChange = async (e) => {
     const image = e.target.files[0];
@@ -82,8 +80,6 @@ export default function AddProductForm() {
         setImagePreview(null);
         setImageUrl("");
         if (fileInputRef.current) fileInputRef.current.value = "";
-        queryClient.invalidateQueries({ queryKey: ["products"] });
-        queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
       },
       onError: () => {
         toast.error("Une erreur est survenue de notre part");

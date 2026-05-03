@@ -14,8 +14,15 @@ export const useUploadImage = () => {
 };
 
 export const useCreateProduct = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: productService.createProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboardProducts"] });
+    },
   });
 };
 
@@ -26,6 +33,7 @@ export const useDeleteProduct = () => {
     mutationFn: (id) => productService.deleteProduct(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboardProducts"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (error) => {
