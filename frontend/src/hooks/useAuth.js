@@ -1,4 +1,9 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import authService from "../services/authService";
 
 export const useRegister = () => {
@@ -20,8 +25,14 @@ export const useLogin = () => {
 };
 
 export const useLogout = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: authService.logout,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
+      queryClient.clear();
+    },
   });
 };
 
@@ -48,7 +59,7 @@ export const useCheckAuth = () => {
     queryKey: ["auth"],
     queryFn: authService.checkAuth,
     retry: false,
-    staleTime: 1000 * 60 * 15,
+    staleTime: 0,
     refetchOnWindowFocus: true,
   });
 };
