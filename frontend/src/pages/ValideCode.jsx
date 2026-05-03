@@ -34,9 +34,7 @@ const ValideCode = () => {
           navigate("/", {
             state: { message: "Compte activé ! Connectez-vous." },
           });
-          toast.success(
-            "Compte activé ! Vous pouvez maintenant vous connecter.",
-          );
+          toast.success("Vous compte est activé !");
           console.log("Code validé:", response);
         },
         onError: (err) => {
