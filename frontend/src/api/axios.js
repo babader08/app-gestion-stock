@@ -3,7 +3,7 @@ import authService from "../services/authService";
 import toast from "react-hot-toast";
 
 const api = axios.create({
-  baseURL: "https://babader-app-gestion-stock.hf.space/api",
+  baseURL: "/api",
   withCredentials: true,
   timeout: 5000,
 });
