@@ -1,0 +1,14 @@
+# Dossiers de configuration et Git
+.git
+.gitignore
+.idea
+.vscode
+
+# Outils de développement local
+.air.toml
+tmp/
+bin/
+
+# Fichiers de logs et environnement local
+*.log
+.env

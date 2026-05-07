@@ -1,0 +1,19 @@
+# Binaires et exécutables
+bin/
+*.exe
+*.test
+*.out
+
+# Variables d'environnement (SÉCURITÉ)
+.env
+.env.*
+!.env.example
+
+# Logs et fichiers temporaires
+tmp/
+*.log
+
+# IDE et OS
+.idea/
+.vscode/
+.DS_Store

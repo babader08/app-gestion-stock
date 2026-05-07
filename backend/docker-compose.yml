@@ -1,0 +1,27 @@
+services:
+  # Ton backend Go
+  backend:
+    build: .
+    container_name: app_backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  # Ta base de données (qui sera aussi dans Docker sur le VPS)
+  db:
+    image: postgres:15-alpine
+    container_name: app_db
+    environment:
+      POSTGRES_USER: ${DB_USER:-babader}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-mon_password_secret}
+      POSTGRES_DB: ${DB_NAME:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
