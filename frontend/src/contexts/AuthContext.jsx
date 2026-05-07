@@ -15,12 +15,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (!isLoading) {
-      // ✅ Si authentifié
       if (authData?.data?.authenticated) {
         setIsAuthenticated(true);
         setUser({ id: authData.data.userID });
       } else {
-        // ❌ Si pas authentifié
         setIsAuthenticated(false);
         setUser(null);
       }

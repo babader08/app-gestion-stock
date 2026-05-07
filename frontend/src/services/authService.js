@@ -78,6 +78,7 @@ const authService = {
       throw error.response?.data || new Error("Une erreur est survenue");
     }
   },
+  
 
   refresh: async () => {
     try {

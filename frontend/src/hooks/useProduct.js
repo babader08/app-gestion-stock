@@ -19,9 +19,12 @@ export const useCreateProduct = () => {
   return useMutation({
     mutationFn: productService.createProduct,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboardProducts"] });
+      return Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] }),
+        queryClient.invalidateQueries({ queryKey: ["dashboardProducts"] })
+
+    ])
     },
   });
 };
@@ -32,9 +35,11 @@ export const useDeleteProduct = () => {
   return useMutation({
     mutationFn: (id) => productService.deleteProduct(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboardProducts"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      return Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({ queryKey: ["dashboardProducts"] }),
+        queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] })
+    ])
     },
     onError: (error) => {
       console.error("Erreur lors de la suppression:", error);
@@ -83,9 +88,11 @@ export const useUpdateProduct = () => {
   return useMutation({
     mutationFn: ({ id, data }) => productService.updateProduct(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
-    },
+      return Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] })
+    ])
+      },
     onError: (error) => {
       console.error("Erreur update:", error);
     },

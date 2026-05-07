@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { Edit2, Trash2, Package, Loader2 } from "lucide-react";
 import {
   useAllProducts,
@@ -10,6 +9,7 @@ import ConfirmDialog from "../ui/Confirmdialog";
 import EditProductModal from "./EditProductModal";
 import toast from "react-hot-toast";
 
+
 const AllProducts = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
@@ -19,6 +19,7 @@ const AllProducts = () => {
     status: "",
     category: "",
   });
+
 
   const {
     data,
@@ -148,7 +149,8 @@ const AllProducts = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {data?.pages.flatMap((page) => page.data?.products ?? []).length ===
+            {
+              data?.pages.flatMap((page) => page.data?.products ?? []).length ===
             0 ? (
               <tr>
                 <td colSpan={8} className="px-6 py-16 text-center">
