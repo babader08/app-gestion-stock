@@ -2,9 +2,11 @@ package main
 
 import (
 	"App-Gestion-Produits/internal/models"
+	"App-Gestion-Produits/internal/repository"
 	"App-Gestion-Produits/internal/validator"
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -237,7 +239,7 @@ func (app *application) updateProductHandler(w http.ResponseWriter, r *http.Requ
 
 	err = app.productService.UpdateProduct(product, userID)
 	if err != nil {
-		if err.Error() == "aucune modification effectuée (produit introuvable ou accès refusé)" {
+		if errors.Is(err, repository.ErrProductNotFound) {
 			app.sendError(w, http.StatusNotFound, "Produit introuvable ou vous n'avez pas les droits")
 			return
 		}

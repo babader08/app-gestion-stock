@@ -4,7 +4,6 @@ import (
 	"App-Gestion-Produits/internal/models"
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -130,9 +129,9 @@ func (r *ProductRepo) DeleteProducts(productId int, userId int) error {
 		return err
 	}
 
-	rowsAffected, _ := res.RowsAffected() //vérifie si une ligne a vraiment été supprimée
+	rowsAffected, _ := res.RowsAffected()
 	if rowsAffected == 0 {
-		return errors.New("aucun produit supprimé (id inexistant ou non autorisé)")
+		return ErrProductNotFound
 	}
 
 	return nil
@@ -147,7 +146,7 @@ func (r *ProductRepo) UpdateProduct(p *models.Product, userId int) error {
 
 	rowsAffected, _ := res.RowsAffected()
 	if rowsAffected == 0 {
-		return errors.New("aucune modification effectuée (produit introuvable ou accès refusé)")
+		return ErrProductNotFound
 	}
 	return nil
 }

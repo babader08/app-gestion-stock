@@ -34,9 +34,9 @@ func (app *application) routes() http.Handler {
 	mux.Handle("POST /api/password-reset", dynamic.ThenFunc(app.resetPasswordHandler))
 	mux.Handle("POST /api/resend-otp", dynamic.ThenFunc(app.resendOTPHandler))
 	mux.Handle("POST /api/refresh", dynamic.ThenFunc(app.refreshHandler))
-	mux.Handle("/api/upload", dynamic.ThenFunc(app.UploadImage))
 
 	// Routes protégées :
+	mux.Handle("POST /api/upload", protected.ThenFunc(app.UploadImage))
 	mux.Handle("GET /api/check-auth", protected.ThenFunc(app.checkAuthHandler))
 	mux.Handle("POST /api/logout", protected.ThenFunc(app.logoutUserHandler))
 	mux.Handle("POST /api/create-product", protected.ThenFunc(app.createProductHandler))

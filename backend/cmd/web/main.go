@@ -22,7 +22,7 @@ type application struct {
 	mailer         mailer.Mailer
 	Cloudinary     *cloudinary.Cloudinary
 	productRepo    repository.ProductRepository
-	productService *service.ProductService
+	productService service.ProductServicer
 	userService    *service.UserService
 }
 
