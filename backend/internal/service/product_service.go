@@ -41,13 +41,14 @@ func (s *ProductService) AddProduct(UserID int64, ProductName, Etiquette, Catego
 	return &products, err
 }
 
-func (s *ProductService) GetProductsByUser(ctx context.Context, userID int64, limit int, cursor int, status, category, search string) (map[string]any, error) {
+func (s *ProductService) GetProductsByUser(ctx context.Context, userID int64, filter models.ProductFilter) (map[string]any, error) {
 
-	if limit < 1 || limit > 100 {
-		limit = 20
+	if filter.Limit < 1 || filter.Limit > 100 {
+		filter.Limit = 20
 	}
-	if cursor < 0 {
-		cursor = 0
+
+	if filter.Cursor <= 0 {
+		filter.Cursor = 0
 	}
 
 	//  Validation des filtres :
@@ -55,28 +56,34 @@ func (s *ProductService) GetProductsByUser(ctx context.Context, userID int64, li
 		"En Stock": true,
 		"Rupture":  true,
 	}
-	if status != "" && !validStatus[status] {
-		status = ""
+	
+	if filter.Status != "" && !validStatus[filter.Status] {
+		filter.Status = ""
 	}
 
 	// le champ de recherche :
-	search = strings.TrimSpace(search)
-	if len(search) > 100 {
-		search = search[:100]
+	filter.Search = strings.TrimSpace(filter.Search)
+	if len(filter.Search) > 100 {
+		filter.Search = filter.Search[:100]
 	}
 
-	products, err := s.productRepo.GetProductsByUser(ctx, userID, limit+1, cursor, status, category, search)
+	products, err := s.productRepo.GetProductsByUser(ctx, userID, filter)
 	if err != nil {
-		s.logger.Error("cannot get the products", "error", err)
+		s.logger.Error(
+			"cannot get the products",
+			"error", err,
+			"user_id", userID,
+			"filter", filter,
+		)
 		return nil, err
 	}
 
 	hasMore := false
 	nextCursor := 0
 
-	if len(products) > limit {
+	if len(products) > filter.Limit {
 		hasMore = true
-		products = products[:limit]
+		products = products[:filter.Limit]
 	}
 
 	if len(products) > 0 {

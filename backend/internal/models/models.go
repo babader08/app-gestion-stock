@@ -54,3 +54,11 @@ type DashboardStats struct {
 	EnStock          int     `json:"en_stock"`
 	EnRupture        int     `json:"en_rupture"`
 }
+
+type ProductFilter struct {
+	Limit    int
+	Cursor   int
+	Status   string
+	Category string
+	Search   string
+}

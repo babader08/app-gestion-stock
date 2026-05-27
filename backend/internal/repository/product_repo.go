@@ -12,7 +12,7 @@ import (
 
 type ProductRepository interface {
 	AddProduct(u *models.Product) (int64, time.Time, error)
-	GetProductsByUser(ctx context.Context, userID int64, limit, cursor int, status, category, search string) ([]models.Product, error)
+	GetProductsByUser(ctx context.Context, userID int64, filter models.ProductFilter) ([]models.Product, error)
 	DeleteProducts(productId int, userId int) error
 	UpdateProduct(p *models.Product, userId int) error
 	GetDashboardStats(userID int) (*models.DashboardStats, error)
@@ -65,39 +65,39 @@ func (r *ProductRepo) AddProduct(u *models.Product) (int64, time.Time, error) {
 }
 
 // GetProductsByUser : repository pour récupérer les donnees :
-func (r *ProductRepo) GetProductsByUser(ctx context.Context, userID int64, limit, cursor int, status, category, search string) ([]models.Product, error) {
+func (r *ProductRepo) GetProductsByUser(ctx context.Context, userID int64, filter models.ProductFilter) ([]models.Product, error) {
 	query := `SELECT id, product_name, etiquette, category, purchase_price, selling_price, 
     stock, status, image_url, user_id, created_at FROM stock  WHERE user_id = $1`
 
 	args := []any{userID}
 	paramCount := 2
 
-	if cursor > 0 {
+	if filter.Cursor > 0 {
 		query += ` AND id < $` + strconv.Itoa(paramCount)
-		args = append(args, cursor)
+		args = append(args, filter.Cursor)
 		paramCount++
 	}
 
-	if status != "" {
+	if filter.Status != "" {
 		query += ` AND status = $` + strconv.Itoa(paramCount)
-		args = append(args, status)
+		args = append(args, filter.Status)
 		paramCount++
 	}
 
-	if category != "" {
+	if filter.Category != "" {
 		query += ` AND category = $` + strconv.Itoa(paramCount)
-		args = append(args, category)
+		args = append(args, filter.Category)
 		paramCount++
 	}
 
-	if search != "" {
+	if filter.Search != "" {
 		query += ` AND product_name ILIKE $` + strconv.Itoa(paramCount)
-		args = append(args, "%"+search+"%")
+		args = append(args, "%"+filter.Search+"%")
 		paramCount++
 	}
 
 	query += ` ORDER BY id DESC LIMIT $` + strconv.Itoa(paramCount)
-	args = append(args, limit)
+	args = append(args, filter.Limit+1)
 
 	rows, err := r.DB.QueryContext(ctx, query, args...)
 	if err != nil {

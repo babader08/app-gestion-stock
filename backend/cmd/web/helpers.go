@@ -56,7 +56,7 @@ func (app *application) sendError(w http.ResponseWriter, status int, message str
 	return json.NewEncoder(w).Encode(response)
 }
 
-// sendFieldErrors envoie les erreurs de validation au client
+// sendFieldErrors envoie les erreurs de validation au client, il sert à transformer erreurs Go en réponse JSON frontend
 func (app *application) sendFieldErrors(w http.ResponseWriter, errors map[string][]string) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusUnprocessableEntity)
@@ -69,6 +69,7 @@ func (app *application) sendFieldErrors(w http.ResponseWriter, errors map[string
 	return json.NewEncoder(w).Encode(response)
 }
 
+// this fonction permet de verifier si un paramètre des filters est absent pour lui donnee un valeur par défaut :
 func getIntQuery(r *http.Request, key string, defaultVal int) int {
 	val := r.URL.Query().Get(key)
 	if val == "" {

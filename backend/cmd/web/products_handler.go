@@ -62,6 +62,7 @@ func (app *application) UploadImage(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		app.serverError(w, r, err)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -84,7 +85,7 @@ func (app *application) createProductHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		if err := app.sendError(w, http.StatusUnauthorized, "json invalide"); err != nil {
+		if err := app.sendError(w, http.StatusBadRequest, "json invalide"); err != nil {
 			app.serverError(w, r, err)
 		}
 		return
@@ -113,19 +114,6 @@ func (app *application) createProductHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	// ✅ Stocke simplement en DB
-	product := &models.Product{
-		ProductName:   input.ProductName,
-		Etiquette:     input.Etiquette,
-		Category:      input.Category,
-		Status:        input.Status,
-		PurchasePrice: input.PurchasePrice,
-		SellingPrice:  input.SellingPrice,
-		Stock:         input.Stock,
-		ImageURL:      input.ImageURL, // ← C'est tout !
-		UserID:        int64(userId),
-	}
-
 	product, err := app.productService.AddProduct(int64(userId), input.ProductName, input.Etiquette, input.Category, input.Status, input.ImageURL, input.PurchasePrice, input.SellingPrice, input.Stock)
 	if err != nil {
 		app.serverError(w, r, err)
@@ -144,15 +132,23 @@ func (app *application) createProductHandler(w http.ResponseWriter, r *http.Requ
 // handler pour récupérer les stock :
 func (app *application) getProductsHandler(w http.ResponseWriter, r *http.Request) {
 
-	userID := r.Context().Value(userContextKey).(int)
+	userID, ok := r.Context().Value(userContextKey).(int)
+	if !ok {
+		if err := app.sendError(w, http.StatusUnauthorized, "non autorisé"); err != nil {
+			app.serverError(w, r, err)
+		}
+		return
+	}
 
-	limit := getIntQuery(r, "limit", 20)
-	cursor := getIntQuery(r, "cursor", 0)
-	status := r.URL.Query().Get("status")
-	category := r.URL.Query().Get("category")
-	search := r.URL.Query().Get("search")
+	filter := models.ProductFilter{
+		Limit:    getIntQuery(r, "limit", 20),
+		Cursor:   getIntQuery(r, "cursor", 0),
+		Status:   r.URL.Query().Get("status"),
+		Category: r.URL.Query().Get("category"),
+		Search:   r.URL.Query().Get("search"),
+	}
 
-	results, err := app.productService.GetProductsByUser(r.Context(), int64(userID), limit, cursor, status, category, search)
+	results, err := app.productService.GetProductsByUser(r.Context(), int64(userID), filter)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
