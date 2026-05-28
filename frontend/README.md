@@ -55,7 +55,7 @@ The UI is fully in French and uses FCFA as the currency format.
 - **Automatic token refresh** — Axios interceptor silently retries on 401
 - **Forgot password** — two-step flow (email → OTP code → new password)
 - **Product management** — create, edit, delete with confirmation dialog
-- **Image upload** with client-side compression (auto-compressed to < 0.5 MB)
+- **Image upload** with client-side compression (auto-compressed to < 0.5 MB) — requires authentication
 - **Infinite scroll** pagination for the product list
 - **Filtering** by status, category, and search term
 - **Dashboard statistics** — total products, estimated expenses, estimated revenue, total stock

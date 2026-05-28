@@ -67,7 +67,10 @@ Repository (internal/repository/)  ← SQL queries, database access
 PostgreSQL
 ```
 
-Each layer depends only on the layer below it via interfaces, making the service layer fully testable without a real database.
+Each layer depends only on the layer below it via interfaces, making every layer fully testable without a real database.
+
+- **`ProductServicer`** — interface extracted from `ProductService`, used by handlers. Allows handler-level unit tests with mock services.
+- **`ProductRepository`** — interface used by the service layer. Allows service-level unit tests with mock repositories.
 
 ---
 
@@ -98,12 +101,12 @@ Each layer depends only on the layer below it via interfaces, making the service
 | `POST` | `/api/refresh` | Rotate access + refresh tokens |
 | `POST` | `/api/password-reset-request` | Request a password reset code |
 | `POST` | `/api/password-reset` | Reset password with code |
-| `POST` | `/api/upload` | Upload a product image |
 
 ### Protected Routes (JWT required)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| `POST` | `/api/upload` | Upload a product image to Cloudinary |
 | `GET` | `/api/check-auth` | Verify authentication status |
 | `GET` | `/api/user` | Get current user profile |
 | `POST` | `/api/logout` | Logout and invalidate refresh token |
@@ -216,19 +219,22 @@ RESEND_API_KEY=re_xxxxxxxxxxxx
 
 ## Running Tests
 
-Unit tests cover the full service layer (34 tests) using in-memory mocks — no database required.
+**48 tests** cover both the service layer and the HTTP handler layer — no database or real HTTP server required.
 
 ```bash
-go test ./internal/service/... -v
+# Run all tests
+go test ./...
+
+# Run with details
+go test ./... -v
 ```
 
-Test files:
-
-| File | Coverage |
-|------|----------|
-| `mocks_test.go` | Shared mock implementations and helpers |
-| `product_service_test.go` | AddProduct, GetProductsByUser, Delete, Update, Dashboard |
-| `auth_service_test.go` | Register, Login, Activate, Reset password, Refresh, Logout |
+| File | Layer | Coverage |
+|------|-------|----------|
+| `internal/service/mocks_test.go` | Service | Shared mock repos and helpers |
+| `internal/service/product_service_test.go` | Service | AddProduct, GetProductsByUser, Delete, Update, Dashboard (18 tests) |
+| `internal/service/auth_service_test.go` | Service | Register, Login, Activate, Reset password, Refresh, Logout (16 tests) |
+| `cmd/web/products_handler_test.go` | Handler | createProduct, getProducts, delete, update, dashboard — valid inputs, error paths, bad IDs (14 tests) |
 
 ---
 
@@ -264,22 +270,24 @@ backend/
 │   ├── routes.go               # HTTP routes and server setup
 │   ├── middleware.go           # Logger, RecoverPanic, CORS, requireAuth
 │   ├── helpers.go              # sendJSON, sendError, sendFieldErrors
-│   ├── auth_handler.go         # Register, login, OTP, password reset
-│   ├── products_handler.go     # Product CRUD + image upload
-│   └── user_handler.go         # User profile
+│   ├── auth_handler.go              # Register, login, OTP, password reset
+│   ├── products_handler.go          # Product CRUD + image upload
+│   ├── products_handler_test.go     # Handler tests (14 tests)
+│   └── user_handler.go              # User profile
 ├── internal/
 │   ├── models/
 │   │   └── models.go           # User, Product, DashboardStats, ProductFilter
 │   ├── repository/
 │   │   ├── auth_repo.go        # Auth SQL queries
+│   │   ├── errors.go           # ErrProductNotFound sentinel
 │   │   ├── product_repo.go     # Product SQL queries
 │   │   └── user_repo.go        # User SQL queries
 │   ├── service/
 │   │   ├── auth_service.go     # Auth business logic
 │   │   ├── product_service.go  # Product business logic
 │   │   ├── user_service.go     # User business logic
-│   │   ├── errors.go           # Sentinel errors
-│   │   ├── service.go          # Mailer interface
+│   │   ├── errors.go           # Sentinel errors (ErrWrongPassword, etc.)
+│   │   ├── service.go          # Mailer + ProductServicer interfaces
 │   │   ├── auth_service_test.go
 │   │   ├── product_service_test.go
 │   │   └── mocks_test.go
