@@ -37,9 +37,7 @@ api.interceptors.response.use(
       }
     }
 
-    if (error.code === "ECONNABORTED") {
-      toast.error("connexion trop lente, réessayez encore");
-    } else if (!error.response) {
+    if (!error.response) {
       toast.error("Serveur injoignable, réessayez plus tard");
     } else if (error.response.status === 500) {
       toast.error("Erreur interne du serveur");
