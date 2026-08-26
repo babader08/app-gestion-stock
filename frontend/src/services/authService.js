@@ -29,6 +29,7 @@ const authService = {
       const response = await api.post("/login", { email, password });
       return response.data;
     } catch (error) {
+      console.log(error);
       throw error.response?.data || new Error("Une erreur est survenue");
     }
   },
@@ -78,7 +79,6 @@ const authService = {
       throw error.response?.data || new Error("Une erreur est survenue");
     }
   },
-  
 
   refresh: async () => {
     try {

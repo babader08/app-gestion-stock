@@ -11,6 +11,13 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.log("❌ AXIOS ERROR");
+    console.log("URL :", originalRequest?.url);
+    console.log("METHOD :", originalRequest?.method);
+    console.log("CODE :", error.code);
+    console.log("MESSAGE :", error.message);
+    console.log("STATUS :", error.response?.status);
+    console.log("RESPONSE :", error.response?.data);
     const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (
@@ -36,13 +43,13 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-
     if (!error.response) {
       toast.error("Serveur injoignable, réessayez plus tard");
     } else if (error.response.status === 500) {
       toast.error("Erreur interne du serveur");
+    } else {
+      toast.error(error.response.data?.message || "Une erreur est survenue");
     }
-
     return Promise.reject(error);
   },
 );

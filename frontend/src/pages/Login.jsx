@@ -3,12 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useLogin } from "../hooks";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const [dataUser, setDataUser] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { setUser, setIsAuthenticated } = useContext(AuthContext);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { mutate: login, isPending } = useLogin();
 
@@ -76,7 +78,7 @@ const Login = () => {
               />
             </div>
 
-            <div>
+            <div className="relative">
               <div className="flex items-center justify-between">
                 <label className="block text-sm font-semibold text-gray-700">
                   Mot de passe
@@ -95,10 +97,27 @@ const Login = () => {
                 onChange={(e) =>
                   setDataUser({ ...dataUser, password: e.target.value })
                 }
-                type="password"
+                type={!showPassword ? "password" : "text"}
                 className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-2.5 transition-all outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-100 disabled:text-gray-500"
                 placeholder="••••••••"
               />
+              <div>
+                {showPassword ? (
+                  <EyeOff
+                    onClick={() => setShowPassword(!showPassword)}
+                    size={20}
+                    color="black"
+                    className="text-dark-mid hover:text-dark absolute top-2/3 right-2 -translate-y-1/2 transition-colors"
+                  />
+                ) : (
+                  <Eye
+                    onClick={() => setShowPassword(!showPassword)}
+                    size={20}
+                    color="black"
+                    className="text-dark-mid hover:text-dark absolute top-2/3 right-2 -translate-y-1/2 transition-colors"
+                  />
+                )}
+              </div>
             </div>
 
             {error && (
