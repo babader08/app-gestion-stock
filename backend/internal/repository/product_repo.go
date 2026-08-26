@@ -55,12 +55,18 @@ func (r *ProductRepo) CloseProducts() {
 func (r *ProductRepo) AddProduct(u *models.Product) (int64, time.Time, error) {
 	var stockId int64
 	var timeCreate time.Time
+
+	fmt.Println("INSERT PRODUCT :", u.ProductName)
+	fmt.Println("IMAGE URL :", u.ImageURL)
+	fmt.Println("USER ID :", u.UserID)
+	
 	err := r.InsertStockStmt.QueryRow(u.ProductName, u.Etiquette, u.Category, u.PurchasePrice, u.SellingPrice, u.Stock, u.Status, u.ImageURL, u.UserID).Scan(&stockId, &timeCreate)
 	if err != nil {
 		return 0, time.Time{}, err
 	}
 	u.ID = stockId
 	return stockId, timeCreate, nil
+
 }
 
 // GetProductsByUser : repository pour récupérer les donnees :

@@ -56,7 +56,7 @@ func (s *ProductService) GetProductsByUser(ctx context.Context, userID int64, fi
 		"En Stock": true,
 		"Rupture":  true,
 	}
-	
+
 	if filter.Status != "" && !validStatus[filter.Status] {
 		filter.Status = ""
 	}

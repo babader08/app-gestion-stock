@@ -83,7 +83,7 @@ func (app *application) createProductHandler(w http.ResponseWriter, r *http.Requ
 		PurchasePrice float64 `json:"purchase_price"`
 		SellingPrice  float64 `json:"selling_price"`
 		Stock         int     `json:"stock"`
-		ImageURL      string  `json:"image_url"` // ← Juste l'URL !
+		ImageURL      string  `json:"image_url"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
